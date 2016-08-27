@@ -243,4 +243,15 @@
     <string name="remember_warn_title">Warning: The username will be saved on device</string>
     <string name="remember_warn_content">Saving the username on the device can be dangerous; if someone can access your memory they will have access to your username in clear text. If you choose to continue, please press "OK".</string>
 
+    <string-array name="languages" translatable="false">
+        <item>English</item>
+        <item>Español</item>
+        <item>Français</item>
+        <item>Italiano</item>
+        <item>日本語:にほんご</item>
+        <item>正體字/繁體字</item>
+        <item>正体字/繁体字</item>
+    </string-array>
+    <string name="select_language">Select language</string>
+
 </resources>

@@ -109,8 +109,8 @@ public class GaService extends Service implements INotificationHandler {
     private final Map<Integer, GaObservable> mBalanceObservables = new HashMap<>();
     private final GaObservable mNewTxObservable = new GaObservable();
     private final GaObservable mVerifiedTxObservable = new GaObservable();
-    private String mSignUpMnemonics = null;
-    private Bitmap mSignUpQRCode = null;
+    private byte[] mSignUpMnemonics;
+    private final Map<Integer, Bitmap> mSignUpQRCode = new HashMap<>(7);
     private int mCurrentBlock = 0;
 
     private boolean mAutoReconnect = true;
@@ -742,21 +742,22 @@ public class GaService extends Service implements INotificationHandler {
 
     public void resetSignUp() {
         mSignUpMnemonics = null;
-        if (mSignUpQRCode != null)
-            mSignUpQRCode.recycle();
-        mSignUpQRCode = null;
+        if (!mSignUpQRCode.isEmpty())
+            for (final Bitmap qr : mSignUpQRCode.values())
+                qr.recycle();
+        mSignUpQRCode.clear();
     }
 
-    public String getSignUpMnemonic() {
+    public String getSignUpMnemonic(final int lang) {
         if (mSignUpMnemonics == null)
-            mSignUpMnemonics = CryptoHelper.mnemonic_from_bytes(CryptoHelper.randomBytes(32));
-        return mSignUpMnemonics;
+            mSignUpMnemonics = CryptoHelper.randomBytes(32);
+        return CryptoHelper.mnemonic_from_bytes(lang, mSignUpMnemonics);
     }
 
-    public Bitmap getSignUpQRCode() {
-        if (mSignUpQRCode == null)
-            mSignUpQRCode = new QrBitmap(getSignUpMnemonic(), Color.WHITE).getQRCode();
-       return mSignUpQRCode;
+    public Bitmap getSignUpQRCode(final int lang) {
+        if (!mSignUpQRCode.containsKey(lang))
+            mSignUpQRCode.put(lang, new QrBitmap(getSignUpMnemonic(lang), Color.WHITE).getQRCode());
+       return mSignUpQRCode.get(lang);
     }
 
     public void addBalanceObserver(final int subAccount, final Observer o) {
