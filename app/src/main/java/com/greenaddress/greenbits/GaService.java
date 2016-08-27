@@ -820,12 +820,24 @@ public class GaService extends Service implements INotificationHandler {
         return updateBalance(subAccount);
     }
 
-    public Fiat getFiatBalance(final int subAccount) {
-        return mFiatBalances.get(subAccount);
+    public ListenableFuture<Fiat> getFiatBalance(final int subAccount) {
+        if (mFiatBalances.containsKey(subAccount))
+            return Futures.immediateFuture(mFiatBalances.get(subAccount));
+        return Futures.transform(getMapBalance(subAccount), new Function<Map<String,String>, Fiat>() {
+            public Fiat apply(final Map<String, String> input) {
+                return mFiatBalances.get(subAccount);
+            }
+        });
     }
 
-    public float getFiatRate() {
-        return mFiatRate;
+    public ListenableFuture<Float> getFiatRate() {
+        if (mFiatRate != 0)
+            return Futures.immediateFuture(mFiatRate);
+        return Futures.transform(getMapBalance(getCurrentSubAccount()), new Function<Map<String,String>, Float>() {
+            public Float apply(final Map<String, String> input) {
+                return mFiatRate;
+            }
+        });
     }
 
     public String getFiatCurrency() {
