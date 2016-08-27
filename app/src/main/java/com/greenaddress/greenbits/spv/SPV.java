@@ -236,7 +236,7 @@ public class SPV {
                 public void onSuccess(final ArrayList outputs) {
                     updateUnspentOutputs(outputs);
                 }
-            });
+            }, mService.getExecutor());
     }
 
     private void updateUnspentOutputs(final ArrayList outputs) {
@@ -375,9 +375,9 @@ public class SPV {
                     public void onSuccess(final List<Boolean> result) {
                         fireBalanceChanged(changedSubaccounts);
                     }
-                });
+                }, mService.getExecutor());
             }
-        });
+        }, mService.getExecutor());
     }
 
     public void onNewBlock(final int blockHeight) {
@@ -548,7 +548,7 @@ public class SPV {
                     t.printStackTrace();
                     mNotifyManager.cancel(mNotificationId);
                 }
-            });
+            }, mService.getExecutor());
         }
     }
 
